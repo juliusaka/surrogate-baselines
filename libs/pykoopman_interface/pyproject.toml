@@ -6,9 +6,10 @@ readme = "README.md"
 authors = [
     { name = "Julius Aka", email = "julius.aka@uni-a.de" }
 ]
-requires-python = "==3.10"
+requires-python = "==3.10.*"
 dependencies = [
-    "pykoopman",
+    "mlflow>=3.6.0",
+    "pykoopman[torch]",
 ]
 
 
