@@ -1,0 +1,20 @@
+[project]
+name = "pykoopman-interface"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Julius Aka", email = "julius.aka@uni-a.de" }
+]
+requires-python = "==3.10"
+dependencies = [
+    "pykoopman",
+]
+
+
+[build-system]
+requires = ["uv_build>=0.9.5,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+pykoopman = { path = "./dependencies/pykoopman/", editable = true }
