@@ -57,14 +57,29 @@ class dmdc_training_class(dmd_training_class):
 
 @dataclass
 class train_test_dmd_config_class:
-    dataset_name: str = MISSING
+    # Provide dataset by path (preferred) or by name (legacy); only one should be set
+    dataset_path: Optional[str] = None
+    dataset_name: Optional[str] = None
     dmd_training: dmd_training_class = MISSING
 
     mlflow_experiment_name: str = 'Default'
-    mlflow_tracking_uri: str = 'http://127.0.0.1:5000'
+    mlflow_tracking_uri: str = ''
 
     n_workers: Optional[int] = None # None is all cpus available
     raise_exception: bool = True
+    
+    @field_validator('dataset_name')
+    @classmethod
+    def set_dataset_name_from_path(cls, v, info: ValidationInfo):
+        """Extract filename from dataset_path and set as dataset_name if not already set."""
+        dataset_path = info.data.get('dataset_path')
+        if dataset_path is not None:
+            path = Path(dataset_path)
+            # Extract filename without extension as dataset_name
+            return path.stem
+        return v
+
+
 
 
 def get_config_store():

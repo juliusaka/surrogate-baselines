@@ -1,0 +1,12 @@
+defaults:
+  - base_train_test_dmd
+  - dmd_training: base_dmdc_training
+  - _self_
+
+dataset_path: dependencies\bnode-core\resources\data\surrogate-test-data\data\datasets\StratifiedHeatFlowModel_v3_p-R_c-RROCS__n-100\StratifiedHeatFlowModel_v3_p-R_c-RROCS__n-100_dataset.hdf5
+mlflow_experiment_name: test_dmdc_shf
+n_workers: 8
+
+dmd_training:
+  n_samples_train: 200
+  max_rank: 18
