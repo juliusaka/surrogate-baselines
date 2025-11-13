@@ -6,20 +6,32 @@ import hydra
 import mlflow
 import logging
 import pandas as pd
-import dask
+# import dask
 import sys
 import json
 import torch
 from pathlib import Path
 import shutil
 
-from networks.src.normalization import NormalizationLayer1D
-from config import train_test_dmd_config_class, edmdc_training_class, dmdc_training_class
-from utils.hydra_mlflow_decorator import log_hydra_to_mlflow
-from filepaths import filepath_dataset_from_name, dir_current_hydra_output
+from pykoopman_interface.pk_interface_config import get_config_store, train_test_dmd_config_class
+
+# This is hacky as pykoopman is not really well packaged.
+_path = str(Path(__file__).parent / './../../dependencies/bnode-core/src/bnode_core/nn/nn_utils')
+print('Inserting path for bnode-core nn_utils:', _path)
+print(f"path exists: {Path(_path).exists()}")
+sys.path.insert(0, _path)
+
+_path = str(Path(__file__).parent / './../../dependencies/bnode-core/src/bnode_core/utils/')
+print('Inserting path for bnode-core utils:', _path)
+print(f"path exists: {Path(_path).exists()}")
+sys.path.insert(0, _path)
 
 
 import warnings
+import sys
+from normalization import NormalizationLayer1D
+from hydra_mlflow_decorator import log_hydra_to_mlflow
+
 warnings.filterwarnings("ignore")
 
 class normalization_model_class(torch.nn.Module):
@@ -330,7 +342,7 @@ def train_for_best_model(cfg: train_test_dmd_config_class):
     elif type(cfg.dmd_training) == dmdc_training_class:
         logging.info('Fitting DMDc models for all ranks')
         models, training_results = fit_dmdc_until_max_rank(cfg, normalization_model, train_data, validation_data, test_data)
-        pd.DataFrame(training_results).to_csv(dir_current_hydra_output() / 'dmdc_training_results.csv', index=False)
+        pd.DataFrame(training_results).to_csv(Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir) / 'dmdc_training_results.csv', index=False)
         
         # test the best model
         best_idx = np.argmin([res['rmse_validation'] for res in training_results])
@@ -347,10 +359,10 @@ def train_for_best_model(cfg: train_test_dmd_config_class):
             'rank': best_rank,
         }        
         # save as json to hydra output directory
-        with open(dir_current_hydra_output() / 'best_model_params.json', 'w') as f:
+        with open(Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir) / 'best_model_params.json', 'w') as f:
             json.dump(best_model_params, f)
         # copy dataset to hydra output directory and save predictions of the best model
-        dataset_copy_path = dir_current_hydra_output() / 'dataset.hdf5'
+        dataset_copy_path = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir) / 'dataset.hdf5'
         shutil.copy(path, dataset_copy_path)
         test_dataset = h5py.File(dataset_copy_path, 'r+')
         # generate predictions for the best model
