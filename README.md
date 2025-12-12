@@ -3,6 +3,8 @@
 ## Description
 This repository contains implementations and interfacing scripts to various surrogate modeling methods such that they can be used with the data conventions as defined in the "bnode-core" repository. 
 
+This repository is not intended to have beautiful or efficient code, it should just get "the job done" for fair comparison with other methods.
+
 ## Installation
 uv is used to manage the virtual environment.
 Run
