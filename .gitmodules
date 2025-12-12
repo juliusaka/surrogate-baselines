@@ -3,4 +3,4 @@
 	url = git@github.com:juliusaka/pykoopman.git
 [submodule "libs/pykoopman_interface/dependencies/bnode-core"]
 	path = libs/pykoopman_interface/dependencies/bnode-core
-	url = git@git.rz.uni-augsburg.de:akajuliu/bnode-core.git
+	url = ../bnode-core.git
